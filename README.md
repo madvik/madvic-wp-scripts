@@ -1,6 +1,6 @@
 # madvic WordPress Scripts
 
-This add-on is a `mu-plugin` for WordPress.
+This add-on is a `mu-plugin` for WordPress, many hooks for basic customize.
 
 - `madvic_wp_scripts_security.php` is security hooks
 - `madvic_wp_scripts_tunning.php` is customize hooks
