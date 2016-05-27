@@ -1,12 +1,20 @@
 <?php
 
 /**
+* Revision setting
+* @source https://codex.wordpress.org/Revisions
+*/ 
+if(!WP_POST_REVISIONS){
+	define('WP_POST_REVISIONS', 5);
+}
+
+/**
 * Hide update notifications
 */
 function hide_wp_update_nag() {
 	remove_action( 'admin_notices', 'update_nag', 3 );
 }
-add_action('admin_menu','hide_wp_update_nag');
+//add_action('admin_menu','hide_wp_update_nag');
 
 /**
 * Does not display the previous and next link
@@ -29,7 +37,7 @@ remove_action('wp_head', 'parent_post_rel_link', 10, 0);  	// Supprime le lien v
 /**
  * Deactive admin bar
  */
-add_filter('show_admin_bar', '__return_false');	
+//add_filter('show_admin_bar', '__return_false');	
 
 /**
 * Masquer la ligne existant depuis la 2.8 :
@@ -125,7 +133,38 @@ function add_medium_large( $format ){
 }
 add_filter( 'image_size_names_choose', 'add_medium_large');
 
+/*========================= emoji ============================= */
+/**
+ * Disable the emoji's
+ * @source https://www.keycdn.com/blog/website-performance-optimization/#http
+ */
+function disable_emojis() {
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'admin_print_styles', 'print_emoji_styles' );
+	remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+	remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+	remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+	add_filter( 'tiny_mce_plugins', 'disable_emojis_tinymce' );
+}
+add_action( 'init', 'disable_emojis' );
 
+/**
+ * Filter function used to remove the tinymce emoji plugin.
+ *
+ * @param    array  $plugins
+ * @return   array             Difference betwen the two arrays
+ */
+function disable_emojis_tinymce( $plugins ) {
+	if ( is_array( $plugins ) ) {
+		return array_diff( $plugins, array( 'wpemoji' ) );
+	} else {
+		return array();
+	}
+}
+// Les boutons social sharing ne s'affichent plus comme voulu
+/*========================= end emoji ============================= */
 
 /**
 * Deactivate API
@@ -142,5 +181,21 @@ add_filter('rest_jsonp_enabled', '__return_false');
 remove_action( 'xmlrpc_rsd_apis', 'rest_output_rsd' );
 remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
 remove_action( 'template_redirect', 'rest_output_link_header', 11 );
+
+/**
+* Dashboard cleaning
+* Désactive les meta_boxes inutile au dashboard
+*/
+function remove_dashboard_widgets() {
+	remove_action('welcome_panel', 'wp_welcome_panel',99);
+
+	global $wp_meta_boxes;
+	//unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_right_now']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_activity']);
+	unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']); 
+	//unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+}
+add_action('wp_dashboard_setup', 'remove_dashboard_widgets' );
 
 ?>

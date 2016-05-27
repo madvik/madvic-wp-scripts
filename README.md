@@ -15,6 +15,7 @@ This add-on is a `mu-plugin` for WordPress, many hooks for basic customize.
 
 ## Tunning
 
+- Revision limited to 5 if is not defined
 - Hide update notifications
 - Deactive admin bar
 - Does not display the previous and next link ( `<link rel='prev'` ... and `<link rel='next'` ...)
@@ -23,5 +24,7 @@ This add-on is a `mu-plugin` for WordPress, many hooks for basic customize.
 - Minify HTML
 - Remove h1 from the WordPress editor
 - Add medium format `medium_large` to media in admin
+- Deactive Emoji
 - Deactivate API
+- Dashboard cleaning
 
