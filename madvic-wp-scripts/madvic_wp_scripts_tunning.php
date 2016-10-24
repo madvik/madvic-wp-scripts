@@ -4,7 +4,7 @@
 * Revision setting
 * @source https://codex.wordpress.org/Revisions
 */ 
-if(!WP_POST_REVISIONS){
+if(!defined('WP_POST_REVISIONS')){
 	define('WP_POST_REVISIONS', 5);
 }
 
