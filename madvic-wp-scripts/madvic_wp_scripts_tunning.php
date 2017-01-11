@@ -198,4 +198,50 @@ function remove_dashboard_widgets() {
 }
 add_action('wp_dashboard_setup', 'remove_dashboard_widgets' );
 
+/*========================= RSS ============================= */
+/**
+ * FLUX RSS
+ * @source  *  @source https://fr.semrush.com/blog/boostez-votre-referencement-naturel-sur-wordpress/
+ */
+
+/**
+ *  Plus aucun autre flux RSS sauf celui de l'accueil
+ */
+remove_action( 'wp_head', 'feed_links', 2 );
+remove_action( 'wp_head', 'feed_links_extra', 3 );
+
+/**
+ *  Plus d'emoji dans les flux RSS
+ */
+remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+/**
+ *  plus de flux RSS de commentaire
+ */
+add_filter( 'feed_links_show_comments_feed', 'seomix_rss_remove_comments' );
+function seomix_rss_remove_comments() {
+	return false;
+}
+
+/**
+ *  Redirection 301 de tous les flux RSS d’un WordPress, sauf le flux principal.
+ */
+add_action( 'template_redirect', 'seomix_template_redirect_feed' );
+function seomix_template_redirect_feed() {
+	if( is_feed() ) {
+		global $wp_query;
+
+		$home = home_url();
+		$mainfeedurl = user_trailingslashit ( $home.'/feed' );
+		$currenturl = isset($_SERVER['HTTPS']) ? "https" : "http" . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+		if ( $currenturl != $mainfeedurl ) {
+			wp_redirect( $mainfeedurl );
+			die;
+		} elseif( $wp_query->post_count === 0 ) { // Si aucun article n'existe, WordPress génère une 404 pour le flux. Dans ce cas, on redirige vers l'accueil.
+			wp_redirect( $home );
+			die;
+		}
+	}
+}
+/*========================= end RSS ============================= */
 ?>
